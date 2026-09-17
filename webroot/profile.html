@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile — Expense Tracker</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <h1>👤 Profile</h1>
+    <nav class="topnav">
+      <button id="navBackToDashboard" class="btn btn-ghost-light">← Dashboard</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="card profile-card">
+    <div class="profile-row">
+      <span class="label">Name</span>
+      <span id="profileName" class="profile-value">—</span>
+    </div>
+    <div class="profile-row">
+      <span class="label">Full Name</span>
+      <span id="profileFullName" class="profile-value">—</span>
+    </div>
+    <div class="profile-row">
+      <span class="label">Email</span>
+      <span id="profileEmail" class="profile-value">—</span>
+    </div>
+    <div class="profile-row">
+      <span class="label">Daily Expenses (today)</span>
+      <span id="profileDailyExpenses" class="profile-value">Rs. 0.00</span>
+    </div>
+    <div class="profile-row profile-row-edit">
+      <span class="label">Monthly Income</span>
+      <div class="profile-edit-group">
+        <input id="profileIncomeInput" type="number" step="0.01" placeholder="0.00">
+        <button id="btnSaveIncome" class="btn btn-secondary">Save</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card profile-actions">
+    <button id="btnLogout" class="btn btn-outline btn-block">Logout</button>
+    <button id="btnDeleteAccount" class="btn btn-danger btn-block">Delete Account</button>
+  </section>
+</main>
+
+<!-- Delete account confirm -->
+<div id="deleteAccountModal" class="modal-backdrop hidden">
+  <div class="modal">
+    <h2>Delete your account?</h2>
+    <p>This permanently deletes your profile <strong>and every expense you've logged</strong>. This cannot be undone.</p>
+    <div class="modal-actions">
+      <button id="btnCancelDeleteAccount" class="btn btn-ghost">Cancel</button>
+      <button id="btnConfirmDeleteAccount" class="btn btn-danger">Delete Everything</button>
+    </div>
+  </div>
+</div>
+
+<script src="common.js"></script>
+<script src="profile.js"></script>
+</body>
+</html>

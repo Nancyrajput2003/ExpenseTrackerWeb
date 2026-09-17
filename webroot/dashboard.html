@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Expense Tracker</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <h1>💰 Expense Tracker</h1>
+    <nav class="topnav">
+      <button id="navReports" class="btn btn-ghost-light">📊 Reports</button>
+      <button id="navProfile" class="btn btn-ghost-light">👤 Profile</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="card summary-card">
+    <div>
+      <span class="label">Total Spent</span>
+      <span id="totalSpent" class="total-value">Rs. 0.00</span>
+    </div>
+    <button id="btnAdd" class="btn btn-primary">+ Add Expense</button>
+  </section>
+
+  <section class="card toolbar">
+    <div class="toolbar-group">
+      <label>Sort</label>
+      <select id="sortField">
+        <option value="date">Date</option>
+        <option value="amount">Amount</option>
+        <option value="category">Category</option>
+      </select>
+      <button id="btnSort" class="btn btn-secondary">Sort</button>
+    </div>
+
+    <div class="toolbar-group">
+      <input id="searchKeyword" type="text" placeholder="Search keyword…">
+      <button id="btnSearch" class="btn btn-secondary">Search</button>
+    </div>
+
+    <div class="toolbar-group">
+      <input id="searchDate" type="date">
+      <button id="btnSearchDate" class="btn btn-secondary">Find date</button>
+    </div>
+
+    <div class="toolbar-group">
+      <label>View</label>
+      <select id="periodMode">
+        <option value="all">All</option>
+        <option value="monthly">Monthly</option>
+        <option value="yearly">Yearly</option>
+      </select>
+      <input id="periodMonth" type="month" class="hidden-input">
+      <input id="periodYear" type="number" placeholder="Year" class="hidden-input" style="width:90px;">
+      <button id="btnApplyPeriod" class="btn btn-secondary">View</button>
+      <button id="btnClearFilter" class="btn btn-ghost">Clear filters</button>
+    </div>
+  </section>
+
+  <section id="resultsCard" class="card">
+    <div id="filterBanner" class="filter-banner hidden"></div>
+    <div id="emptyState" class="empty-state hidden">
+      No expenses yet. Click <strong>+ Add Expense</strong> to get started.
+    </div>
+    <div id="expenseList" class="expense-list"></div>
+  </section>
+
+  <section class="card actions-row">
+    <button id="btnCategories" class="btn btn-outline">📋 Category Totals</button>
+    <button id="btnTop" class="btn btn-outline">🔥 Top Expenses</button>
+    <button id="btnActivity" class="btn btn-outline">🕒 Activity Log</button>
+    <button id="btnReminders" class="btn btn-outline">⏰ Reminders</button>
+  </section>
+</main>
+
+<!-- Add Expense Modal -->
+<div id="addModal" class="modal-backdrop hidden">
+  <div class="modal">
+    <h2>Add Expense</h2>
+    <label>Title</label>
+    <input id="inputTitle" type="text" placeholder="e.g. Groceries">
+    <label>Amount (Rs.)</label>
+    <input id="inputAmount" type="number" step="0.01" placeholder="0.00">
+    <label>Category</label>
+    <input id="inputCategory" type="text" placeholder="e.g. Food">
+    <label>Date</label>
+    <input id="inputDate" type="date">
+    <label>Description</label>
+    <input id="inputNote" type="text" placeholder="optional description">
+    <div class="modal-actions">
+      <button id="btnCancelAdd" class="btn btn-ghost">Cancel</button>
+      <button id="btnSaveAdd" class="btn btn-primary">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Generic Info Modal (categories / top / activity) -->
+<div id="infoModal" class="modal-backdrop hidden">
+  <div class="modal">
+    <h2 id="infoTitle">Info</h2>
+    <div id="infoBody" class="info-body"></div>
+    <div class="modal-actions">
+      <button id="btnCloseInfo" class="btn btn-primary">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reminders Modal -->
+<div id="reminderModal" class="modal-backdrop hidden">
+  <div class="modal">
+    <h2>Reminders</h2>
+    <p class="hint">First reminder scheduled is the first one processed.</p>
+    <div class="reminder-row">
+      <input id="reminderText" type="text" placeholder="e.g. Pay electricity bill">
+      <button id="btnScheduleReminder" class="btn btn-secondary">Schedule</button>
+    </div>
+    <div class="reminder-row">
+      <button id="btnProcessReminder" class="btn btn-secondary">Process next</button>
+      <button id="btnReminderCount" class="btn btn-secondary">Pending count</button>
+    </div>
+    <div id="reminderResult" class="reminder-result"></div>
+    <div class="modal-actions">
+      <button id="btnCloseReminder" class="btn btn-primary">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete expense confirm -->
+<div id="deleteModal" class="modal-backdrop hidden">
+  <div class="modal">
+    <h2>Delete expense?</h2>
+    <p id="deleteMessage"></p>
+    <div class="modal-actions">
+      <button id="btnCancelDelete" class="btn btn-ghost">Cancel</button>
+      <button id="btnConfirmDelete" class="btn btn-danger">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script src="common.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>

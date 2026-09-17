@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reports — Expense Tracker</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <h1>📊 Reports</h1>
+    <nav class="topnav">
+      <button id="navBackToDashboard" class="btn btn-ghost-light">← Dashboard</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="card toolbar">
+    <div class="toolbar-group">
+      <label>Range</label>
+      <select id="reportRange">
+        <option value="all">All Time</option>
+        <option value="month">This Month</option>
+        <option value="year">This Year</option>
+      </select>
+      <button id="btnRunReport" class="btn btn-secondary">Show</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 class="section-heading">Spending by Category</h2>
+    <div id="pieChartWrap" class="pie-chart-wrap">
+      <canvas id="pieCanvas" width="240" height="240"></canvas>
+      <div id="pieLegend" class="pie-legend"></div>
+    </div>
+    <p id="pieEmptyState" class="empty-state hidden">Add some expenses to see the breakdown.</p>
+    <p id="pieTotal" class="pie-total"></p>
+  </section>
+</main>
+
+<script src="common.js"></script>
+<script src="reports.js"></script>
+</body>
+</html>

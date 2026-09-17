@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Expense Tracker</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="center-view">
+  <p>Loading…</p>
+</div>
+<script src="common.js"></script>
+<script>
+  (async () => {
+    const profile = await apiGet('/profile');
+    if (!profile.exists) {
+      window.location.href = 'login.html';
+    } else if (sessionStorage.getItem(SESSION_KEY) === 'true') {
+      window.location.href = 'dashboard.html';
+    } else {
+      window.location.href = 'welcome.html';
+    }
+  })();
+</script>
+</body>
+</html>
