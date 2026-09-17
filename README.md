@@ -1,174 +1,125 @@
-# Expense Tracker — Multi-Page Web App (Java + DSA Edition)
+📊 ExpenseTrackerWeb
+A smart and user-friendly Java Expense Tracker web application designed to simplify expense management with expense categorization, sorting, searching, reports, user profiles, and persistent data storage.
 
-A full-stack, **multi-page** web app: a REST API built entirely on the
-JDK's built-in `com.sun.net.httpserver.HttpServer` (**zero external
-dependencies — no Spring, no Maven, no Gradle, no frontend framework, no
-chart library**) plus a plain HTML/CSS/JS frontend split across real,
-separate pages.
+📑 Pages
+Page	File	Purpose
+Router	index.html	Checks profile/session state, redirects to the right page
+Sign in	login.html	First-run onboarding: Name, Full Name, Email
+Welcome	welcome.html	Greets the user by name, then continues to dashboard
+Dashboard	dashboard.html	Add/list/sort/search expenses, monthly/yearly view, category pie chart, top expenses, activity log, reminders
+Profile	profile.html	Name/email, today's spend, monthly income, logout, delete account
+Each page is a real .html file loaded via normal browser navigation (window.location.href = '...'), not a single-page app with hidden divs. Shared logic (API calls, modal helpers, and the login/session guard) lives in common.js, which every page includes.
 
-## Pages
+🔄 Flow
+index.html (no profile) ──> login.html ──> submit ──> welcome.html ──> continue ──> dashboard.html
+│                           │
+(has profile, no session) ──> welcome.html ─────────────┘                           ├── nav ──> profile.html
+(has profile + session)   ──> dashboard.html ───────────────────────────────────────└── nav back ┘
+Logout (on the Profile page) clears the session flag and sends you back to welcome.html — your data is untouched, you just see the greeting again before re-entering the dashboard.
 
-| Page | File | Purpose |
-|---|---|---|
-| Router | `index.html` | Checks profile/session state, redirects to the right page |
-| Sign in | `login.html` | First-run onboarding: Name, Full Name, Email |
-| Welcome | `welcome.html` | Greets the user by name, then continues to the dashboard |
-| Dashboard | `dashboard.html` | Add/list/sort/search expenses, monthly/yearly view, category pie chart, top expenses, activity log, reminders |
-| Profile | `profile.html` | Name/email, today's spend, monthly income, logout, delete account |
+Delete Account removes the stored profile and expense data and returns the user to the sign-in page.
 
-Each page is a real `.html` file loaded via normal browser navigation
-(`window.location.href = '...'`), not a single-page app with hidden divs.
-Shared logic (API calls, modal helpers, and the login/session guard) lives
-in `common.js`, which every page includes.
+✨ Key Application Features
+Expense Logging & Categorization: Record expenses dynamically with custom descriptions, amounts, timestamps, and spending categories.
 
-## Flow
+Top Expense Tracking: Instant access to top-value expenses maintained dynamically by a Max-Heap structure for quick budget evaluation.
 
-```
-index.html ──(no profile)──> login.html ──submit──> welcome.html ──continue──> dashboard.html
-    │                                                                                │
-    └──(has profile, no session)──> welcome.html                          nav → profile.html
-    └──(has profile + session)───> dashboard.html                          ← nav back
-```
+Activity Logging: Real-time activity log managed through a custom singly linked list and FIFO queue to track recent entries and reminders.
 
-- **Logout** (on the Profile page) clears the session flag and sends you
-  back to `welcome.html` — your data is untouched, you just see the
-  greeting again before re-entering the dashboard.
-- **Delete Account** wipes the profile *and every expense* (calls
-  `DELETE /api/profile`, which also clears the expense store server-side),
-  then sends you back to `login.html` for a completely fresh start.
+Dynamic Search & Multi-Criteria Filtering: Fast keyword search, category filtering, and binary search by exact transaction date.
 
-## Why no Spring Boot / chart library / CSS framework?
+Custom Sorting Algorithms: Custom QuickSort and MergeSort routines to organize financial records chronologically or by transaction value.
 
-This was built and **fully tested end-to-end** in a sandboxed environment
-with no access to Maven Central or any CDN, so external dependencies
-weren't an option. Everything — the HTTP server, the JSON handling, and
-the pie chart — is written from scratch:
+Java Built-in Web Server: Native HTTP backend built directly on Java's com.sun.net.httpserver.HttpServer.
 
-- The REST API runs on `com.sun.net.httpserver.HttpServer` (part of the JDK).
-- JSON is a small hand-rolled reader/writer (`web/JsonUtil.java`).
-- The pie chart on the dashboard is drawn with the plain HTML5 `<canvas>`
-  API (`drawPieChart()` in `dashboard.js`) — no Chart.js, no D3.
+Local Data Persistence: Automated profile and transaction storage using flat files (expenses.csv and profile.csv) managed via Java File I/O.
 
-*(This also means it compiles and runs with nothing but `javac`/`java` —
-no build tool needed.)*
+Responsive Multi-Page Dashboard: Clean visual Web interface for real-time spend monitoring and seamless interaction.
 
-## DSA-to-feature mapping
+🛠️ Tech Stack & Core Concepts
+Layer	Technologies & Skills
+Frontend	HTML5, CSS3, JavaScript (Vanilla ES6, Fetch API, DOM Manipulation, HTML Canvas)
+Backend & Networking	Java (JDK 11+), Native HttpServer, Custom JSON Utilities (JsonUtil.java)
+Core Java Concepts	Object-Oriented Programming (OOP), Java File I/O, Exception Handling
+Data Structures & Algorithms	Custom Singly Linked List, Binary Max-Heap, Circular Array Queue, QuickSort, MergeSort, Linear & Binary Search
+Persistence	Java File I/O (FileStorage.java, ProfileStorage.java), Flat CSV File Storage
+🏗️ DSA-to-Feature Mapping
+The UI itself doesn't label anything with these names (no "HashMap" or "Linked List" headings in the app) — the structures work behind the scenes:
 
-| Concept | Where it lives | Feature |
-|---|---|---|
-| **Array / Dynamic Array** | `ArrayList<Expense>` in `ExpenseManager` | Backs the expense list |
-| **Sorting** | `dsa/SortUtils.java` — hand-written QuickSort & MergeSort | Dashboard "Sort" control |
-| **Searching** | `dsa/SearchUtils.java` — Linear & Binary search, plus linear-scan month/year/day filters | Keyword search, exact-date search, monthly/yearly view, "today" stat |
-| **HashMap** | `ExpenseManager` fields | Category totals (feeds the pie chart), O(1) id lookup on delete |
-| **Linked List** | `dsa/MyLinkedList.java` — custom singly linked list | Activity Log |
-| **Queue** | `dsa/MyQueue.java` — custom circular array queue | Reminders |
-| **Heap** | `dsa/MaxHeap.java` — custom binary max-heap | Top Expenses |
-
-The UI itself doesn't label anything with these names (no "HashMap" or
-"Linked List" headings in the app) — the structures work behind the
-scenes; this table is here for you to reference when explaining the
-project (e.g. in an interview or a README for evaluators).
-
-## Verification
-
-Every feature was actually exercised with `curl` against a running server,
-not just written and assumed correct:
-
-- Onboarding → profile creation → profile retrieval
-- All five pages (and their JS files) serve with HTTP 200
-- Adding expenses, monthly view, yearly view, "today" stat
-- Updating monthly income and reading it back
-- Category totals (that the pie chart consumes)
-- Delete account → confirmed profile and all expenses are wiped
-- HTML structure validated (balanced tags) on every page
-
-## Project structure
-
-```
+Concept	Where it lives	Feature
+Array / Dynamic Array	ArrayList<Expense> in ExpenseManager	Backs the expense list
+Sorting	dsa/SortUtils.java — hand-written QuickSort & MergeSort	Dashboard "Sort" control
+Searching	dsa/SearchUtils.java — Linear & Binary search, plus linear-search monthly/yearly filters	Keyword search, exact-date search, monthly/yearly view, "today" stat
+HashMap	ExpenseManager.fields	Category totals (feeds the pie chart, O(1) lookup on delete)
+Linked List	dsa/MyLinkedList.java — custom singly linked list	Activity Log
+Queue	dsa/MyQueue.java — custom circular array queue	Reminders
+Heap	dsa/MaxHeap.java — custom binary max-heap	Top Expenses
+📁 Project Structure
 ExpenseTrackerWeb/
 ├── src/
-│   ├── Main.java                 # starts the server
+│   ├── Main.java              # starts the server
 │   ├── model/
 │   │   ├── Expense.java
 │   │   └── UserProfile.java
 │   ├── dsa/
-│   │   ├── SortUtils.java        (QuickSort + MergeSort)
-│   │   ├── SearchUtils.java      (Linear + Binary search, month/year/day filters)
-│   │   ├── MyLinkedList.java
-│   │   ├── MyQueue.java
-│   │   └── MaxHeap.java
+│   │   ├── SortUtils.java     (QuickSort + MergeSort)
+│   │   ├── SearchUtils.java   (Linear + Binary search, month/year/day filters)
+│   │   ├── MyLinkedList.java  List
+│   │   ├── MyQueue.java       Queue
+│   │   └── MaxHeap.java       Heap
 │   ├── core/
-│   │   ├── ExpenseManager.java   # wires all DSA structures together
-│   │   └── ProfileManager.java   # single local user profile (onboarding/income/delete)
+│   │   ├── ExpenseManager.java # wires all DSA structures together
+│   │   └── ProfileManager.java # single local user profile (onboarding/income/delete)
 │   ├── util/
-│   │   ├── FileStorage.java      # expenses.csv persistence
-│   │   └── ProfileStorage.java   # profile.csv persistence
+│   │   ├── FileStorage.java   # expenses.csv persistence
+│   │   └── ProfileStorage.java# profile.csv persistence
 │   └── web/
-│       ├── ApiServer.java        # HTTP routing (built-in HttpServer)
-│       └── JsonUtil.java         # tiny hand-rolled JSON reader/writer
-└── webroot/
-    ├── index.html    (router, no JS file needed)
-    ├── login.html    + login.js
-    ├── welcome.html  + welcome.js
-    ├── dashboard.html+ dashboard.js
-    ├── profile.html  + profile.js
-    ├── common.js     (shared API helpers + session guard)
-    └── style.css
-```
+│       ├── ApiServer.java     # HTTP routing (built-in HTTP server)
+│       └── JsonUtil.java      # Tiny hand-rolled JSON reader/writer
+└── webroot/                   # router assets
+├── index.html             # router logic
+├── login.html             # login screen
+├── welcome.html           # welcome screen
+├── dashboard.html         # dashboard screen
+├── profile.html           # profile screen
+├── common.js              (shared API helpers + session guard)
+└── style.css
+🚀 How to Run
+Requirements
+JDK 11 or higher
 
-## How to run
+IntelliJ IDEA or any Java-compatible IDE
 
-Requires JDK 11+ (tested on JDK 21). No build tool, no internet access
-needed — just the JDK.
+Using IntelliJ IDEA
+Open the ExpenseTrackerWeb project.
 
-```bash
-cd ExpenseTrackerWeb
-mkdir -p bin
-javac -d bin -encoding UTF-8 $(find src -name "*.java")
-java -cp bin Main
-```
+Make sure the project SDK is configured.
 
-Then open **http://localhost:8080** — it'll route you to the sign-in page
-on first run.
+Locate Main.java inside src.
 
-Run on a different port: `java -cp bin Main 3000`
+Run Main.java.
 
-Data is saved to `expenses.csv` and `profile.csv` in the directory you run
-it from, and reloaded automatically on the next launch.
+Open http://localhost:8080 in your browser.
 
-> **Important**: run the `java -cp bin Main` command from inside the
-> `ExpenseTrackerWeb` folder (not from `src/` or `bin/`), since the app
-> looks for the `webroot/` folder and the CSV files relative to your
-> current working directory.
+The application stores profile and expense data locally using CSV files.
 
-## REST API reference
+Note: Run the application from the project root so that the webroot/, expenses.csv, and profile.csv files are located correctly.
 
-| Method | Path | Description |
-|---|---|---|
-| GET | `/api/expenses` | List all expenses |
-| POST | `/api/expenses` | Add expense — body: `{title, amount, category, date, note}` |
-| DELETE | `/api/expenses/{id}` | Delete by id |
-| GET | `/api/expenses/period?year=&month=` | Monthly (with `month`) or yearly view |
-| POST | `/api/sort?field=date\|amount\|category&algo=quick\|merge` | Sort in place, returns sorted list |
-| GET | `/api/search?keyword=` | Linear search across title/category/note |
-| GET | `/api/search/date?date=yyyy-MM-dd` | Binary search for exact date |
-| GET | `/api/categories` | `{ totals: {category: amount}, grandTotal }` — feeds the pie chart |
-| GET | `/api/top?n=3` | Top N biggest expenses |
-| GET | `/api/activity?limit=15` | Recent activity log |
-| POST | `/api/reminders` | Schedule a reminder — body: `{text}` |
-| POST | `/api/reminders/process` | Dequeue and return the next reminder |
-| GET | `/api/reminders/count` | Pending reminder count |
-| GET | `/api/stats/today` | Today's total spend (Profile page) |
-| GET | `/api/profile` | `{exists, name, fullName, email, monthlyIncome}` |
-| POST | `/api/profile` | Create/update profile — body: `{name, fullName, email}` |
-| POST | `/api/profile/income` | Update monthly income — body: `{monthlyIncome}` |
-| DELETE | `/api/profile` | Delete account (wipes profile + all expenses) |
+🎯 Learning Outcomes
+This project helped me practice:
 
-## Possible extensions
+Core Java and Object-Oriented Programming
 
-- Swap CSV for SQLite via JDBC.
-- Add HTTPS via `HttpsServer` + a self-signed cert.
-- Add real password-based auth (currently there's none — "login" is just
-  a friendly onboarding form, matching a local single-user tool).
-- Port to Spring Boot for a more conventional enterprise stack — the
-  `model`/`dsa`/`core`/`util` packages are already framework-agnostic.
+Data Structures & Algorithms
+
+Searching and sorting
+
+Java File I/O
+
+HTML, CSS, and JavaScript
+
+DOM manipulation
+
+Basic browser-to-server communication
+
+Building a Java-based web application
